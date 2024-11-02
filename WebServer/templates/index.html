@@ -21,7 +21,12 @@
             min-height: 100vh;
             background-color: #3d3d3d;
         }
-
+        .flex-container {
+            display: row;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
         .container {
             background: #4a4a4a;
             width: 100%;
@@ -92,7 +97,7 @@
         }
     </style>
 </head>
-<body>
+<body class="flex-container">
     <div class="container">
         <form action="/submit" method="post">
             <label for="text_field">Text:</label>
