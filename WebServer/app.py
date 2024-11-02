@@ -10,7 +10,18 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    image_extensions = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'}
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+
+    # Prepare a list of dictionaries with file info
+    file_data = [
+        {
+            'name': file,
+            'is_image': file.split('.')[-1].lower() in image_extensions
+        }
+        for file in files
+    ]
+    return render_template('index.html', files=file_data)
 
 @app.route('/submit', methods=['POST'])
 def submit():
