@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MITM Web App</title>
-     <style>
+    <title>Login</title>
+    <style>
         /* Basic CSS Reset */
         * {
             box-sizing: border-box;
@@ -49,6 +49,7 @@
             color: #ffffff;
         }
 
+        input[type="password"],
         input[type="text"],
         input[type="file"] {
             background: #2b2b2b;
@@ -83,20 +84,23 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <form action="/submit" method="post">
-            <label for="text_field">Text:</label>
-            <input type="text" id="text_field" name="text_field" placeholder="Type something...">
-            <button type="submit">Send</button>
-        </form>
-
-         <div class="separator">or</div>
-
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <label for="file">Choose a file</label>
-            <input type="file" id="file" name="file">
-            <button type="submit">Upload</button>
-        </form>
-    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
 </body>
 </html>
