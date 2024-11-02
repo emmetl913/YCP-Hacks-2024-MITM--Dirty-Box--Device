@@ -23,6 +23,7 @@
         }
 
         .container {
+            margin: 10px;
             background: #4a4a4a;
             width: 100%;
             max-width: 500px;
@@ -49,6 +50,7 @@
             color: #ffffff;
         }
 
+        input[type="number"],
         input[type="text"],
         input[type="file"] {
             background: #2b2b2b;
@@ -83,6 +85,18 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <form action="/file_type" method="post">
+            <label for="file_type_selector">Enter File Extension:</label>
+            <input type="text" id="file_type_selector" name="file_type_selector" placeholder="For example: .png">
+            <button type="submit">Reprogram</button>
+        </form>
+        <form action="/file_number" method="post">
+            <label for="file_number_selector">Number of Desired Files:</label>
+            <input type="number" min="1" id="file_number_selector" name="file_number_selector" placeholder="1">
+            <button type="submit">Reprogram</button>
+        </form>
+    </div>
     <div class="container">
         <form action="/submit" method="post">
             <label for="text_field">Text:</label>

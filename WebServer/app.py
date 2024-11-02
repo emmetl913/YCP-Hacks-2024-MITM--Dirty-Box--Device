@@ -51,6 +51,35 @@ def submit():
     text = request.form['text_field']
     return f"Received text: {text}"
 
+@app.route('/file_type', methods=['POST'])
+def set_filetype():
+    text = request.form['file_type_selector']
+    text = validate_filetype(text)
+    if not text:
+        text = '.txt'
+    print(text)
+    return redirect(url_for('index'))
+
+@app.route('/file_number', methods=['POST'])
+def set_filenum():
+    text = request.form['file_number_selector']
+    text = int(text)
+    print("New Desired Files: ", text)
+    return redirect( url_for('index'))
+
+def validate_filetype(text):
+    valid_extensions = {
+        '.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.png', '.jpg', '.jpeg', '.gif',
+        '.bmp', '.csv', '.zip', '.tar', '.gz', '.mp3', '.mp4', '.avi', '.mkv', '.html',
+        '.css', '.js', '.json', '.xml', '.py', '.java', '.c', '.cpp', '.rb', '.go', '.php'
+    }
+
+    text = text.lower()
+    if not text.startswith('.'):
+        text = f'.{text}'
+    return text in valid_extensions
+
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
