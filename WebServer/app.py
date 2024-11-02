@@ -1,27 +1,61 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for, session, flash
+from flask_httpauth import HTTPBasicAuth
+from datetime import timedelta
 import os
 
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
+app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+app.permanent_session_lifetime = timedelta(minutes=10)
+
+USERNAME = "admin"
+PASSWORD = "password123"
 
 
 @app.route('/')
 def index():
-    image_extensions = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'}
-    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    if 'logged_in' in session:
+        image_extensions = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'}
+        files = os.listdir(app.config['UPLOAD_FOLDER'])
 
-    # Prepare a list of dictionaries with file info
-    file_data = [
-        {
-            'name': file,
-            'is_image': file.split('.')[-1].lower() in image_extensions
-        }
-        for file in files
-    ]
-    return render_template('index.html', files=file_data)
+        # Prepare a list of dictionaries with file info
+        file_data = [
+            {
+                'name': file,
+                'is_image': file.split('.')[-1].lower() in image_extensions
+            }
+            for file in files
+        ]
+        return render_template('index.html', files=file_data)
+    else:
+        return redirect(url_for('login'))
+    
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if username == USERNAME and password == PASSWORD:
+            session.permanent = True
+            session['logged_in'] = True
+            return redirect(url_for('index'))
+        else:
+            flash('Stop trying to log into our website dude, your not supposed to be here')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You have been logged out successfully.')
+    return redirect(url_for('login'))
+
 
 @app.route('/submit', methods=['POST'])
 def submit():
