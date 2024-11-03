@@ -36,6 +36,15 @@
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+        .container1 {
+            margin: 10px;
+            background: #4a4a4a;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
         h1 {
             color: #ffffff;
@@ -54,7 +63,15 @@
             margin-bottom: 5px;
             color: #ffffff;
         }
-
+        select {
+            background: #2b2b2b;
+            padding: 10px;
+            border: 1px solid #2c2c2c;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #ffffff;
+        }
         input[type="number"],
         input[type="text"],
         input[type="file"] {
@@ -97,22 +114,52 @@
         .file-link:hover {
             text-decoration: underline;
         }
+        p {
+            color: #ffffff;
+        }
+        a {
+            color: #7ad7ff; /* Bright color for the download links */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #4a7e94; /* Darker shade on hover */
+            text-decoration: underline; /* Underline on hover for better visibility */
+        }
+        li {
+            margin-bottom: 10px; /* Space between links */
+        }
+        .hidden {
+            display: none;
+        }
+        .toggle-button {
+            position: fixed;
+            bottom: 20px; /* 20px from the bottom of the screen */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for exact centering */
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body class="flex-container">
+    <button class="toggle-button" onclick="toggleVisibility()">Debug Toggle</button>
+
     <div class="container">
-        <form action="/file_type" method="post">
+        <form action="/file_scrape_info" method="post">
             <label for="file_type_selector">Enter File Extension:</label>
             <input type="text" id="file_type_selector" name="file_type_selector" placeholder="For example: .png">
-            <button type="submit">Reprogram</button>
-        </form>
-        <form action="/file_number" method="post">
             <label for="file_number_selector">Number of Desired Files:</label>
             <input type="number" min="1" id="file_number_selector" name="file_number_selector" placeholder="1">
             <button type="submit">Reprogram</button>
         </form>
     </div>
-    <div class="container">
+    <div class="container1 hidden">
         <form action="/submit" method="post">
             <label for="text_field">Text:</label>
             <input type="text" id="text_field" name="text_field" placeholder="Type something...">
@@ -121,33 +168,47 @@
 
          <div class="separator">or</div>
 
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <label for="file">Choose a file</label>
-            <input type="file" id="file" name="file">
-            <button type="submit">Upload</button>
+        <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
         </form>
     </div>
     <div class="container">
-        <label>File Viewer</label>
+        <p style="padding-bottom: 2%;">File Viewer</p>
+        <form action="{{ url_for('files_by_user') }}" method="POST">
+            <label for="username">Select Username:</label>
+                <select name="username" id="username">
+                    {% for username in usernames %}
+                        <option value="{{ username }}" {% if username == selected_user %}selected{% endif %}>
+                            {{ username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            <button type="submit">View Files</button>
+        </form>
         <div>
             {% if files %}
-                {% for file in files %}
-                    <hr>
-                    {% if file.is_image %}
-                        <!-- Display as an image if it's an image file -->
-                        <div>
-                            <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
-                            <img src="{{ url_for('uploaded_file', filename=file.name) }}" alt="{{ file.name }}" style="max-width: 100%; margin-bottom: 10px;"></img>
-                        </div>
-                    {% else %}
-                        <!-- Display as a download link if it's not an image file -->
-                        <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
-                    {% endif %}
-                {% endfor %}
+                <ul>
+                    {% for file in files %}
+                        <li>
+                            <a href="{{ url_for('download_file', filename=file.filename) }}">{{ file.filename }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
             {% else %}
-                <p>No files uploaded yet.</p>
+                <p style="padding-bottom: 2%;">No files uploaded yet.</p>
             {% endif %}
         </div>
+        <form action="/clear">
+            <button type="clear_db">Clear Database</button>
+        </form>
     </div>
+
+    <script>
+        function toggleVisibility() {
+            const container1 = document.querySelector('.container1');
+            container1.classList.toggle('hidden');
+        }
+    </script>
 </body>
 </html>
