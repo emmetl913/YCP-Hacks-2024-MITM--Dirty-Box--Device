@@ -21,7 +21,12 @@
             min-height: 100vh;
             background-color: #3d3d3d;
         }
-
+        .flex-container {
+            display: row;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
         .container {
             background: #4a4a4a;
             width: 100%;
@@ -80,9 +85,19 @@
             margin: 20px 0;
             color: #aaa;
         }
+        .file-link {
+            display: block;
+            margin: 5px 0;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .file-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
-<body>
+<body class="flex-container">
     <div class="container">
         <form action="/submit" method="post">
             <label for="text_field">Text:</label>
@@ -97,6 +112,28 @@
             <input type="file" id="file" name="file">
             <button type="submit">Upload</button>
         </form>
+    </div>
+    <div class="container">
+        <label>File Viewer</label>
+        <div>
+            {% if files %}
+                {% for file in files %}
+                    <hr>
+                    {% if file.is_image %}
+                        <!-- Display as an image if it's an image file -->
+                        <div>
+                            <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
+                            <img src="{{ url_for('uploaded_file', filename=file.name) }}" alt="{{ file.name }}" style="max-width: 100%; margin-bottom: 10px;"></img>
+                        </div>
+                    {% else %}
+                        <!-- Display as a download link if it's not an image file -->
+                        <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>No files uploaded yet.</p>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
