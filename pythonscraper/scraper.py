@@ -18,7 +18,7 @@ def upload_files(files, url):
             #else:
             #    print(f"Failed to upload {file_path}. Status code: {response.status_code}")
 
-selectedFiles = pullFiles("C:", "cats.jpg")
+selectedFiles = pullFiles("C:/Users/caleb/OneDrive/Documents/GitHub/YCP-Hacks-2024-MITM--Dirty-Box--Device/demoFiles", ".pdf")
 
 for file in selectedFiles:
     print(file)
