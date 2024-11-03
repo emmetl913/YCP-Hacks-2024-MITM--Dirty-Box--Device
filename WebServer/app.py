@@ -36,18 +36,17 @@ with app.app_context():
 def index():
     if 'logged_in' in session:
         image_extensions = {'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'}
-        files = File.query.filter_by(username=USERNAME).all()
-        all_usernames = get_all_usernames()
+        files = os.listdir(app.config['UPLOAD_FOLDER'])
 
         # Prepare a list of dictionaries with file info
         file_data = [
             {
-                'name': file.filename,
-                #'is_image': file.split('.')[-1].lower() in image_extensions
+                'name': file,
+                'is_image': file.split('.')[-1].lower() in image_extensions
             }
             for file in files
         ]
-        return render_template('index.html', files=files, usernames=all_usernames)
+        return render_template('index.html', files=file_data)
     else:
         return redirect(url_for('login'))
 
@@ -114,13 +113,21 @@ def get_all_usernames():
 
 @app.route('/clear')
 def clear_database():
-    try:
-        db.session.query(File).delete()  # Delete all rows in the File table
-        db.session.commit()  # Commit the changes to the database
-        print("Database cleared successfully.")
-    except Exception as e:
-        db.session.rollback()  # Rollback in case of error
-        print("Error clearing database:", e)
+    folder_path = "C:/Users/elars/Documents/GitHub/YCP-Hacks-2024/WebServer/uploads"
+    if not os.path.isdir(folder_path):
+        print(f"{folder_path} is not a valid directory.")
+        return redirect(url_for('index'))
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            # Check if the path is a file before attempting to delete
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                print(f"Deleted file: {file_path}")
+            else:
+                print(f"Skipped non-file: {file_path}")
+        except Exception as e:
+            print(f"Error deleting {file_path}: {e}")
     return redirect(url_for('index'))
 
 @app.route('/file_scrape_info', methods=['POST'])
@@ -145,28 +152,39 @@ def validate_filetype(text):
         text = f'.{text}'
     return text
 
-
-@app.route('/upload', methods=['GET','POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
-    if 'logged_in' not in session:
-        return redirect(url_for('login'))
+    if 'file' not in request.files:
+        return "No file was part of this request"
+    file = request.files['file']
+    if file.filename == '':
+        return "Error parsing filename"
+    if file:
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        return redirect(url_for('uploaded_file', filename=file.filename))
 
-    if request.method == 'POST':
-        file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-
-            # Save file info to the database
-            new_file = File(filename=filename, username=USERNAME)
-            db.session.add(new_file)
-            db.session.commit()
-
-            flash('File uploaded successfully.')
-            return redirect(url_for('index'))
-
-    return render_template('upload.html')
+# @app.route('/upload', methods=['POST'])
+# def upload_file():
+#     if 'logged_in' not in session:
+#         return redirect(url_for('login'))
+#
+#     if request.method == 'POST':
+#         print("Attempting to upload file...\n")
+#         file = request.files['file']
+#         if file:
+#             filename = secure_filename(file.filename)
+#             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+#             file.save(file_path)
+#
+#             # Save file info to the database
+#             new_file = File(filename=filename, username=USERNAME)
+#             db.session.add(new_file)
+#             db.session.commit()
+#
+#             flash('File uploaded successfully.')
+#             return redirect(url_for('index'))
+#
+#     return render_template('upload.html')
 
 
 @app.route('/uploads/<filename>')

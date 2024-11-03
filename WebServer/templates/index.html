@@ -175,28 +175,34 @@
     </div>
     <div class="container">
         <p style="padding-bottom: 2%;">File Viewer</p>
-        <form action="{{ url_for('files_by_user') }}" method="POST">
-            <label for="username">Select Username:</label>
-                <select name="username" id="username">
-                    {% for username in usernames %}
-                        <option value="{{ username }}" {% if username == selected_user %}selected{% endif %}>
-                            {{ username }}
-                        </option>
-                    {% endfor %}
-                </select>
-            <button type="submit">View Files</button>
-        </form>
+<!--        <form action="{{ url_for('files_by_user') }}" method="POST">-->
+<!--            <label for="username">Select Username:</label>-->
+<!--                <select name="username" id="username">-->
+<!--                    {% for username in usernames %}-->
+<!--                        <option value="{{ username }}" {% if username == selected_user %}selected{% endif %}>-->
+<!--                            {{ username }}-->
+<!--                        </option>-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+<!--            <button type="submit">View Files</button>-->
+<!--        </form>-->
         <div>
             {% if files %}
-                <ul>
-                    {% for file in files %}
-                        <li>
-                            <a href="{{ url_for('download_file', filename=file.filename) }}">{{ file.filename }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                {% for file in files %}
+                    <hr>
+                    {% if file.is_image %}
+                        <!-- Display as an image if it's an image file -->
+                        <div>
+                            <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
+                            <img src="{{ url_for('uploaded_file', filename=file.name) }}" alt="{{ file.name }}" style="max-width: 100%; margin-bottom: 10px;"></img>
+                        </div>
+                    {% else %}
+                        <!-- Display as a download link if it's not an image file -->
+                        <a class="file-link" href="{{ url_for('uploaded_file', filename=file.name) }}">{{ file.name }}</a>
+                    {% endif %}
+                {% endfor %}
             {% else %}
-                <p style="padding-bottom: 2%;">No files uploaded yet.</p>
+                <p>No files uploaded yet.</p>
             {% endif %}
         </div>
         <form action="/clear">
