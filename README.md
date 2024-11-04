@@ -8,7 +8,10 @@ Not only did using Putty allow us to remotely code on the PI device, but it also
 
 To get the CMD to send the files to our computer, we opted to use inline code execution. For the purpose of this project, we did not forcibly install python on the victim computer, but for an actual implementation of such a device, that would be the first step. As the CMD allows a user to directly run code inline, all a keyboard would have to do is type: "python exec(*script you want to execute*)". We created two scripts for the CMD to execute, one which creates a background animation using the [Pygame](https://www.pygame.org/docs/) library. The second is the scraper, which navigates to a **predetermined** file path in the victims computer. A real implmentation of this device would have to automatically navigate to the correct folder using a recursive navigation library such as [Glob](https://docs.python.org/3/library/glob.html). The script then gets a reference to all the files of a certain extension (in our case, we chose .txt), connects to our web server, and uploads each file. As a little joke, we then have the script open notepad and write a little message for the victim; this was really as a proof of concept that an implementation of this could really do nearly *anything* that a regular user could do using a keyboard.
 
-The Python file that we exectued on the PI is included above in the repository, but I will give a brief overview of what the python file does. 
+The Python file that we exectued on the PI is included above in the repository, but I will give a brief overview of what the python file does. Once the proj files are here, I will explain what each element of it does.
 <p align="center">
   <img src="https://github.com/user-attachments/assets/acb5e248-bbe9-4483-8fc7-2eb36004d4da" />
 </p>
+
+# Web Server
+To interface with the files 
