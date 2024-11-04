@@ -4,4 +4,4 @@ This project was created by Caleb Jones, Brandon Woodward, Zachary Cox, and Emme
 # The Device
 Our implementation used a [Raspberry PI Zero 2 W](https://www.microcenter.com/product/643085/raspberry-pi-zero-2-w) and a Micro USB -> USB Type A device to interface with the computer. This device was selected for a multitude of reasons, though any PI device which has OTG and a wireless network chip would work as well. Namely, the PI Zero 2 W is extremely small, and could be convincingly disguised as a USB flash drive. For the casing, we 3D printed [temp link](https://google.com). To interface with the device, we used the Putty software which allows you to plug the IP of the PI device in and directly interface with the console of the PI. This allowed us to write our scripts directly on the PI remotely from our devices.
 
-![IMG_6245](https://github.com/user-attachments/assets/acb5e248-bbe9-4483-8fc7-2eb36004d4da)
+![A Picture of Our Device "The Dirty Box"](https://github.com/user-attachments/assets/acb5e248-bbe9-4483-8fc7-2eb36004d4da){ width="800" height="600" style="display: block; margin: 0 auto" }
