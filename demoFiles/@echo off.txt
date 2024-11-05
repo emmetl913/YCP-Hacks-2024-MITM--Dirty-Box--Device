@@ -1,0 +1,12 @@
+@echo off
+setlocal
+
+:: Get the width of the command prompt
+for /f "tokens=2 delims==" %%i in ('wmic os get /value ^| find "Width"') do (
+    set width=%%i
+)
+
+:: Print the width
+echo The width of the Command Prompt window is: %width%
+
+pause  :: Keep the window open to see the result

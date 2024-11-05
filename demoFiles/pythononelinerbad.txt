@@ -1,0 +1,2 @@
+python
+exec("""\nimport donfos nt_w,screen me.display.i wsWithTitle(WINDOW>ACTIVATE( , 0, 0)\ngreen sFont(* )  # Initialize drops\nfor s ove e\ning:i \n      (string.printable) ont_size) font_size m.-height  display.flip(ygame.event. ygame.quit(

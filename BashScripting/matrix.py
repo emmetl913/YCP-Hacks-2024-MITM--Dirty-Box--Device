@@ -1,60 +1,59 @@
 import string
 import pygame
 import random
+import pygetwindow as gw
+import time
 
-# Initialize Pygame
+# Initialize pygame and set up display
 pygame.init()
-
-# Set up the display
-info = pygame.display.Info()  # Get screen resolution
-width, height = info.current_w, info.current_h  # Use current screen width and height
-# Set borderless window with an offset (10 pixels to the right)
-screen = pygame.display.set_mode((width, height), pygame.NOFRAME)  # Create a borderless window
+info = pygame.display.Info()
+width, height = info.current_w, info.current_h
+screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
 pygame.display.set_caption("Matrix Rain")
 
-# Move the window slightly to the right
-pygame.display.set_mode((width, height), pygame.NOFRAME)  # Reset to apply no frame
-pygame.display.set_caption("Matrix Rain")
-pygame.display.set_mode((width, height), pygame.NOFRAME)
-pygame.display.set_caption("Matrix Rain")
+# Set up window title and delay to ensure display initialization
+window_title = "Matrix Rain"
+time.sleep(0.5)  # Give time for the display to initialize
 
-# Set up colors
+try:
+    window = gw.getWindowsWithTitle(window_title)[0]
+except IndexError:
+    print(f"No window with title '{window_title}' found.")
+    pygame.quit()
+    exit()
+
+# Colors and settings
 black = (0, 0, 0)
 green = (0, 255, 0)
-
-# Set up font
 font_size = 30
 font = pygame.font.SysFont('SerifBold', font_size)
+drops = [random.randint(-height // font_size, 0) for _ in range(width // font_size)]
 
-# Create a list to hold the falling characters
-drops = [0] * (width // font_size)  # Initialize drops
-
-# Set the initial position for each drop to be above the screen
-for i in range(len(drops)):
-    drops[i] = random.randint(-height // font_size, 0)  # Start drops above the screen
+# Function to activate window on specific event detection
+def ensure_window_focus():
+    for event in pygame.event.get():
+        if event.type == pygame.ACTIVEEVENT:  # Detect if window gains focus
+            window.activate()  # Bring the window to the front
 
 running = True
 while running:
+    # Check for window focus and bring to front if needed
+    ensure_window_focus()
+
+    # Draw background and random characters
     screen.fill(black)
-
     for i in range(len(drops)):
-        # Randomly choose a character
-        char = random.choice(string.printable)  # Use any printable character
+        char = random.choice(string.printable)
         text = font.render(char, True, green)
-
-        # Draw the character on the screen
         screen.blit(text, (i * font_size, drops[i] * font_size))
-
-        # Update the drop position
-        drops[i] += 1  # Move drop down by 1 unit
-
-        # Reset the drop if it goes beyond the bottom of the screen
+        drops[i] += 1
         if drops[i] * font_size >= height:
-            drops[i] = random.randint(-height // font_size, 0)  # Reset to above the screen
+            drops[i] = random.randint(-height // font_size, 0)
 
     pygame.display.flip()
     pygame.time.delay(20)
 
+    # Check for quit event
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
